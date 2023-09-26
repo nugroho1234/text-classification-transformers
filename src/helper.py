@@ -138,36 +138,12 @@ def clean_input_text(input_text, patterns, pattern_identifier=None):
                             total=len(pattern), leave=True, ncols=80):
         input_text = re.sub(pattern, " ", input_text)
     return input_text
-   
-        
 
-def create_dataloaders(tokens, labels, test_size=0.2, random_state=42, batch_size=16, shuffle=False, drop_last=False):
-    #split the dataset
-    X_train_temp, X_test, y_train_temp, y_test = train_test_split(tokens, labels,
-                                                   test_size=0.2, random_state=42)
-    X_train, X_valid, y_train, y_valid = train_test_split(X_train_temp, 
-                                                          y_train_temp,
-                                                         test_size=0.25, random_state=42)
+def after_subplot(ax, group_name, x_label):
+    """Add title xlabel and legend to single chart"""
+    ax.set_title(group_name)
+    ax.set_xlabel(x_label)
+    ax.legend(loc="center right")
 
-    print(f'There are {len(X_train)} training data, and {len(X_valid)} validation data, and {len(X_test)} testing data')
-    
-    #create pytorch dataset
-    train_dataset = TextDataset(X_train, y_train)
-    valid_dataset = TextDataset(X_valid, y_valid)
-    test_dataset = TextDataset(X_test, y_test)
-    
-    #create dataloaders
-    #create dataloaders
-    train_loader = torch.utils.data.DataLoader(train_dataset,
-                                               batch_size=batch_size,
-                                               shuffle=True,
-                                               drop_last=True)
-    valid_loader = torch.utils.data.DataLoader(valid_dataset,
-                                               batch_size=batch_size,
-                                              shuffle=shuffle,
-                                              drop_last=drop_last)
-    test_loader = torch.utils.data.DataLoader(test_dataset, 
-                                             batch_size=batch_size,
-                                              shuffle=shuffle,
-                                              drop_last=drop_last)
-    return train_loader, valid_loader, test_loader
+    if group_name.lower() == "loss":
+        ax.set_ylim([None, 4.5])

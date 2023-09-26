@@ -1,9 +1,10 @@
 import torch
-import tqdm
+from tqdm import tqdm
 from livelossplot import PlotLosses
 from livelossplot.outputs import MatplotlibPlot
+from helper import after_subplot
 
-def train_one_epoch(train_dataloader, model, optimizer, loss):
+def train_one_epoch(train_dataloader, model, optimizer, loss, mode='bert'):
     """
     Performs model training for one epoch
     
@@ -12,6 +13,7 @@ def train_one_epoch(train_dataloader, model, optimizer, loss):
     :model: the BERT model
     :optimizer: the optimizer used in training
     :loss: the loss function
+    :mode: either BERT or DistilBERT
     
     OUTPUT
     :train_loss: average training loss
@@ -69,7 +71,7 @@ def train_one_epoch(train_dataloader, model, optimizer, loss):
         
     return train_loss
 
-def valid_one_epoch(valid_dataloader, model, loss):
+def valid_one_epoch(valid_dataloader, model, loss, mode='bert'):
     """
     Function to validate at the end of one epoch
     

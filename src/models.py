@@ -49,13 +49,21 @@ class DistilBertClassifier(nn.Module):
     
     def forward(self, input_ids, attention_mask):
         #forward pass
-        _, bert_output = self.bert(input_ids=input_ids,
+        bert_output = self.bert(input_ids=input_ids,
                                   attention_mask=attention_mask,
                                   return_dict=False)
-        dropout_output = self.activation(self.dropout(bert_output))
+        
+        #extract the [CLS] token representation (first token)
+        cls_token_embedding = bert_output[0][:, 0, :]
+        
+        #apply dropout to the hidden states
+        dropout_output = self.dropout(cls_token_embedding)
+        
+        #apply gelu activation function
+        gelu_output = self.activation(dropout_output)
         
         #apply linear layer
-        final_output = self.linear(dropout_output)
+        final_output = self.linear(gelu_output)
         return final_output
 
 class TextDataset(torch.utils.data.Dataset):
