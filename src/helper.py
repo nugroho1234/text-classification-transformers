@@ -146,4 +146,4 @@ def after_subplot(ax, group_name, x_label):
     ax.legend(loc="center right")
 
     if group_name.lower() == "loss":
-        ax.set_ylim([None, 4.5])
+        ax.set_ylim([None, None])

@@ -147,6 +147,7 @@ def optimize(data_loaders, model, optimizer, loss, n_epochs, model_path, interac
     # initialize tracker for minimum validation loss
     if interactive_tracking:
         liveloss = PlotLosses(outputs=[MatplotlibPlot(after_subplot=after_subplot)])
+        
     else:
         liveloss = None
 
@@ -156,15 +157,16 @@ def optimize(data_loaders, model, optimizer, loss, n_epochs, model_path, interac
     #learning rate scheduler: setup a learning rate scheduler that
     #reduces the learning rate when the validation loss reaches a plateau
     scheduler  = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, threshold=0.01) # YOUR CODE HERE
-
+    
     for epoch in range(1, n_epochs + 1):
 
-        train_loss = train_one_epoch(
-            data_loaders["train"], model, optimizer, loss
-        )
+        train_loss = train_one_epoch(data_loaders["train"], model, optimizer, loss)
 
         valid_loss = valid_one_epoch(data_loaders["valid"], model, loss)
 
+        #get max loss value between train and valid loss for live plotting purpose
+        max_loss_value = max(train_loss, valid_loss)
+        
         # print training/validation statistics
         print(f"Epoch: {epoch} \tTraining Loss: {train_loss:.6f} \tValidation Loss: {valid_loss:.6f}")
 
@@ -187,7 +189,6 @@ def optimize(data_loaders, model, optimizer, loss, n_epochs, model_path, interac
             logs["loss"] = train_loss
             logs["val_loss"] = valid_loss
             logs["lr"] = optimizer.param_groups[0]["lr"]
-
             liveloss.update(logs)
             liveloss.send()
 
